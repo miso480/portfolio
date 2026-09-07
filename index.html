@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tahseen — The Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#120708;--bg2:#1d090c;--paper:#f4dfd3;--paper2:#e9c9bd;
+  --ink:#2a1215;--cream:#f7e9e0;--muted:#cbaea4;--accent:#d98783;
+  --wine:#6f2029;--line:#7e4249;--shadow:0 24px 60px rgba(0,0,0,.42)
+}
+body.light{
+  --bg:#f3e5df;--bg2:#ead2ca;--paper:#fff5ee;--paper2:#f1d9cf;
+  --ink:#30171b;--cream:#3c2024;--muted:#4a2529;--accent:#9b4b56;
+  --wine:#7b2935;--line:#bd8587;--shadow:0 20px 45px rgba(91,47,50,.2)
+}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;color:var(--cream);font-family:"DM Sans",sans-serif;
+  background:radial-gradient(circle at 50% 10%,#3b1018 0,transparent 38%),
+  linear-gradient(135deg,var(--bg),var(--bg2));overflow-x:hidden;
+  transition:background .5s,color .5s
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;
+  background-image:radial-gradient(#e4b3a9 1px,transparent 1px);background-size:42px 42px
+}
+.ambient{position:fixed;border-radius:50%;filter:blur(70px);opacity:.18;pointer-events:none}
+.ambient-1{width:340px;height:340px;background:#9e3445;left:-140px;top:30%}
+.ambient-2{width:280px;height:280px;background:#d28a77;right:-100px;bottom:10%}
+
+.topbar{
+  height:78px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 4vw;border-bottom:1px solid rgba(222,165,157,.2);
+  position:fixed;top:0;left:0;right:0;z-index:20;
+  background:rgba(18,7,8,.62);backdrop-filter:blur(12px)
+}
+body.light .topbar{background:rgba(243,229,223,.72)}
+.brand{font-family:"Cormorant Garamond",serif;color:var(--cream);text-decoration:none;font-size:16px;letter-spacing:.12em}
+.brand:first-letter{color:var(--accent)}
+.top-actions{display:flex;gap:10px}
+.toggle,.icon-btn{
+  border:1px solid var(--line);background:transparent;color:var(--cream);
+  border-radius:30px;padding:8px 13px;font:inherit;font-size:11px;cursor:pointer;
+  transition:.25s
+}
+.toggle:hover,.icon-btn:hover{background:rgba(255,220,210,.08)}
+.icon-btn{width:34px;padding:0}
+
+section{scroll-margin-top:78px}
+.hero,.hand-section,.social-section{max-width:1300px;margin:auto}
+.hero{
+  min-height:100vh;display:grid;grid-template-columns:44% 56%;
+  align-items:center;padding:110px 4vw 55px
+}
+.copy{padding:30px 0 30px 5vw;z-index:2}
+.eyebrow{font-size:10px;letter-spacing:.2em;color:var(--muted);margin-bottom:22px}
+.copy h1{
+  font:600 clamp(55px,6vw,90px)/.85 "Cormorant Garamond",serif;letter-spacing:-.03em
+}
+.copy h1 em{font-style:italic;font-weight:400}
+.copy h1 span{font-size:.55em;color:var(--accent)}
+.subtitle{margin-top:25px;font:italic 18px "Cormorant Garamond",serif;color:#d9bbb1}
+.subtitle b{color:var(--accent);font-size:11px;margin:0 8px}
+.about-copy{max-width:470px;color:var(--muted);font-size:14px;line-height:1.85;margin:24px 0 0}
+.about-copy strong{display:block;color:var(--cream);font:500 24px "Cormorant Garamond",serif;margin-bottom:9px}
+.tabletop{height:610px;position:relative;display:flex;align-items:center;justify-content:center}
+.playing-card{
+  background:linear-gradient(145deg,var(--paper),var(--paper2));color:var(--ink);
+  border:1px solid rgba(77,31,35,.28);border-radius:10px;box-shadow:var(--shadow);
+  position:relative;overflow:hidden
+}
+.playing-card:before{
+  content:"";position:absolute;inset:8px;border:1px solid rgba(108,45,51,.3);
+  border-radius:6px;pointer-events:none
+}
+.profile-card{
+  width:255px;height:395px;transform:rotate(-5deg) translate(-35px,0);
+  z-index:4;transition:transform .5s
+}
+.profile-card:hover{transform:rotate(-1deg) translate(-35px,-12px)}
+.deck-card{
+  position:absolute;width:235px;height:365px;border-radius:10px;
+  background:repeating-linear-gradient(45deg,#3b0f15 0 7px,#4d131b 7px 14px);
+  border:7px solid #dfb4a5;box-shadow:var(--shadow)
+}
+.deck-card:after{
+  content:"♥";position:absolute;inset:25px;border:1px solid #a95f66;color:#a95f66;
+  display:grid;place-items:center;font:80px "Cormorant Garamond"
+}
+.deck-one{left:2%;top:12%;transform:rotate(-29deg)}
+.deck-two{right:4%;bottom:10%;transform:rotate(19deg);z-index:1}
+.deck-two:after{content:"♠"}
+.photo-placeholder{
+    position:absolute;
+    inset:70px 35px;
+    background:#e3b2a5;
+    border:5px solid #fff0e8;
+    outline:1px solid #a95f66;
+    overflow:hidden;
+}
+
+.photo-placeholder img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    display:block;
+}
+
+.photo-placeholder small{
+    font:9px "DM Sans";
+    opacity:.8;
+}
+.corner{
+  position:absolute;top:14px;left:15px;font:700 22px/16px "Cormorant Garamond";z-index:2
+}
+.corner span{font-size:18px}
+.corner.bottom{top:auto;left:auto;right:15px;bottom:14px;transform:rotate(180deg)}
+.tabletape{
+  position:absolute;width:250px;height:18px;border-radius:50%;
+  border-top:3px solid #c77b79;opacity:.75;transform:rotate(-9deg);
+  left:20%;bottom:12%
+}
+.floating-suit{position:absolute;color:#c36f72;font-size:40px;opacity:.8}
+.suit-heart{top:7%;right:13%}.suit-star{bottom:14%;left:13%;font-size:28px}
+.suit-diamond{top:27%;left:4%;font-size:22px}
+
+.hand-section{
+  min-height:100vh;padding:130px 5vw 120px;display:flex;flex-direction:column;justify-content:center
+}
+.section-heading{text-align:center;margin-bottom:70px}
+.section-heading .eyebrow{margin-bottom:18px}
+.section-heading h2{
+  font:500 clamp(50px,6vw,78px)/.9 "Cormorant Garamond";letter-spacing:-.03em
+}
+.section-heading h2 em{font-style:italic}
+.section-heading p:last-child{color:var(--muted);margin-top:18px;font-size:13px}
+.card-row{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:center}
+.info-card{
+  height:505px;padding:65px 35px 35px;text-align:center;transition:.45s;cursor:pointer
+}
+.info-card:nth-child(1){transform:rotate(-2deg)}
+.info-card:nth-child(2){transform:rotate(0deg);margin-top:-25px}
+.info-card:nth-child(3){transform:rotate(2deg)}
+.info-card:hover{transform:translateY(-14px) rotate(0deg);box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.illustration{
+  height:190px;display:grid;place-items:center;font:64px/1 "Cormorant Garamond";color:var(--wine)
+}
+.info-card h3{font:600 38px "Cormorant Garamond"}
+.info-card ul{
+  list-style:none;color:#76565a;font-size:13px;line-height:1.9;margin:14px auto 0;
+  max-width:280px
+}
+.info-card li:before{content:"✦";color:#9b4b56;font-size:9px;margin-right:7px}
+.card-tag{
+  display:inline-block;margin-top:28px;border:1px solid #bd8587;border-radius:20px;
+  padding:7px 12px;font-size:9px
+}
+.skill-strip{
+  margin:75px auto 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  padding:18px;display:flex;justify-content:space-around;flex-wrap:wrap;gap:15px;
+  color:var(--muted);font-size:9px;letter-spacing:.2em;max-width:900px
+}
+
+.social-section{
+  min-height:100vh;padding:135px 5vw 110px;display:grid;
+  grid-template-columns:35% 65%;align-items:center
+}
+.social-intro{padding-right:50px}
+.social-intro h2{font:500 clamp(55px,6vw,78px)/.88 "Cormorant Garamond"}
+.social-intro h2 em{font-style:italic}
+.social-intro p:last-child{color:var(--muted);line-height:1.7;margin-top:20px;max-width:320px}
+.social-deck{
+  display:grid;grid-template-columns:repeat(3,210px);gap:24px;justify-content:center
+}
+.social-card{
+  height:330px;padding:60px 25px 25px;text-align:center;text-decoration:none;
+  transition:.45s;display:block
+}
+.social-card:nth-child(1){transform:rotate(-3deg)}
+.social-card:nth-child(2){transform:rotate(1deg);margin-top:28px}
+.social-card:nth-child(3){transform:rotate(3deg)}
+.social-card:hover{transform:translateY(-16px) rotate(0);box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.social-icon{height:100px;display:grid;place-items:center;font:600 52px "Cormorant Garamond";color:var(--wine)}
+.social-card h3{font:600 32px "Cormorant Garamond"}
+.social-card p{color:#76565a;font-size:12px;margin-top:8px}
+.arrow{display:block;margin-top:28px;color:#805055}
+.footer-mark{text-align:center;color:var(--muted);font-size:9px;letter-spacing:.2em;padding:0 0 30px}
+
+.reveal{animation:rise .8s both}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1}}
+.shuffling{animation:shuffle .7s ease}
+@keyframes shuffle{
+  0%,100%{transform:translateX(0) rotate(0)}
+  25%{transform:translateX(-20px) rotate(-8deg)}
+  50%{transform:translateX(20px) rotate(8deg)}
+  75%{transform:translateX(-10px) rotate(-4deg)}
+}
+
+/* =========================
+   TABLET + MOBILE
+   ========================= */
+
+@media (max-width: 900px){
+
+  .topbar{
+    height:68px;
+    padding:0 5vw;
+  }
+
+  .hero{
+    grid-template-columns:1fr;
+    min-height:auto;
+    padding:110px 7vw 70px;
+    text-align:center;
+  }
+
+  .copy{
+    padding:0;
+  }
+
+  .copy h1{
+    font-size:clamp(52px,10vw,72px);
+    line-height:.88;
+  }
+
+  .subtitle{
+    margin-top:20px;
+    font-size:17px;
+  }
+
+  .about-copy{
+    max-width:520px;
+    margin:22px auto 0;
+    font-size:14px;
+    line-height:1.8;
+  }
+
+  .about-copy strong{
+    font-size:22px;
+  }
+
+  .tabletop{
+    width:100%;
+    height:500px;
+    margin-top:15px;
+  }
+
+  .profile-card{
+    width:235px;
+    height:365px;
+    transform:rotate(-4deg);
+  }
+
+  .profile-card:hover{
+    transform:rotate(-2deg) translateY(-6px);
+  }
+
+  .deck-card{
+    width:205px;
+    height:320px;
+  }
+
+  .deck-one{
+    left:3%;
+    top:10%;
+  }
+
+  .deck-two{
+    right:3%;
+    bottom:8%;
+  }
+
+  .floating-suit{
+    font-size:32px;
+  }
+
+  .hand-section{
+    min-height:auto;
+    padding:100px 7vw;
+  }
+
+  .section-heading{
+    margin-bottom:50px;
+  }
+
+  .section-heading h2{
+    font-size:clamp(45px,9vw,65px);
+  }
+
+  .card-row{
+    grid-template-columns:1fr;
+    width:100%;
+    max-width:360px;
+    margin:auto;
+    gap:35px;
+  }
+
+  .info-card{
+    width:100%;
+    height:450px;
+    margin:0 !important;
+  }
+
+  .info-card:nth-child(1),
+  .info-card:nth-child(2),
+  .info-card:nth-child(3){
+    transform:rotate(0deg);
+  }
+
+  .info-card:hover{
+    transform:translateY(-8px);
+  }
+
+  .social-section{
+    min-height:auto;
+    padding:110px 7vw 80px;
+    display:block;
+    text-align:center;
+  }
+
+  .social-intro{
+    padding:0;
+    margin-bottom:55px;
+  }
+
+  .social-intro h2{
+    font-size:clamp(48px,10vw,70px);
+  }
+
+  .social-intro p:last-child{
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .social-deck{
+    grid-template-columns:1fr;
+    width:100%;
+    max-width:250px;
+    margin:auto;
+    gap:35px;
+  }
+
+  .social-card{
+    width:100%;
+    height:300px;
+    margin:0 !important;
+    transform:rotate(0deg) !important;
+  }
+
+}
+
+
+/* =========================
+   SMALL PHONES
+   ========================= */
+
+@media (max-width: 620px){
+
+  .topbar{
+    height:62px;
+    padding:0 4vw;
+  }
+
+  .brand{
+    font-size:13px;
+    letter-spacing:.08em;
+  }
+
+  .top-actions{
+    gap:6px;
+  }
+
+  .toggle{
+    padding:6px 8px;
+    font-size:9px;
+  }
+
+  .icon-btn{
+    width:30px;
+    height:30px;
+  }
+
+  .hero{
+    padding:95px 6vw 45px;
+  }
+
+  .copy h1{
+    font-size:52px;
+    line-height:.9;
+  }
+
+  .subtitle{
+    font-size:16px;
+    margin-top:18px;
+  }
+
+  .about-copy{
+    font-size:13px;
+    line-height:1.75;
+    margin-top:20px;
+  }
+
+  .about-copy strong{
+    font-size:21px;
+  }
+
+  .tabletop{
+    height:390px;
+    margin-top:5px;
+  }
+
+  .profile-card{
+    width:195px;
+    height:305px;
+    transform:rotate(-4deg);
+  }
+
+  .profile-card:hover{
+    transform:rotate(-4deg);
+  }
+
+  .photo-placeholder{
+    inset:45px 18px;
+  }
+
+  .deck-card{
+    width:160px;
+    height:250px;
+  }
+
+  .deck-one{
+    left:-8%;
+    top:12%;
+  }
+
+  .deck-two{
+    right:-8%;
+    bottom:8%;
+  }
+
+  .deck-card:after{
+    inset:18px;
+    font-size:55px;
+  }
+
+  .corner{
+    top:11px;
+    left:12px;
+    font-size:18px;
+  }
+
+  .corner.bottom{
+    right:12px;
+    bottom:11px;
+  }
+
+  .floating-suit{
+    font-size:25px;
+  }
+
+  .suit-heart{
+    top:4%;
+    right:5%;
+  }
+
+  .suit-star{
+    bottom:8%;
+    left:5%;
+  }
+
+  .suit-diamond{
+    top:22%;
+    left:1%;
+  }
+
+  .hand-section{
+    padding:80px 6vw;
+  }
+
+  .section-heading{
+    margin-bottom:40px;
+  }
+
+  .section-heading h2{
+    font-size:45px;
+    line-height:.95;
+  }
+
+  .section-heading p:last-child{
+    font-size:12px;
+    line-height:1.6;
+    max-width:280px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+
+  .card-row{
+    max-width:300px;
+    gap:28px;
+  }
+
+  .info-card{
+    height:410px;
+    padding:55px 25px 25px;
+  }
+
+  .illustration{
+    height:145px;
+    font-size:54px;
+  }
+
+  .info-card h3{
+    font-size:34px;
+  }
+
+  .info-card ul{
+    font-size:12px;
+    line-height:1.8;
+  }
+
+  .card-tag{
+    margin-top:20px;
+  }
+
+  .social-section{
+    padding:85px 6vw 60px;
+  }
+
+  .social-intro{
+    margin-bottom:40px;
+  }
+
+  .social-intro h2{
+    font-size:48px;
+  }
+
+  .social-deck{
+    max-width:210px;
+    gap:28px;
+  }
+
+  .social-card{
+    height:280px;
+    padding:50px 20px 20px;
+  }
+
+  .social-icon{
+    height:75px;
+    font-size:40px;
+  }
+
+  .social-card h3{
+    font-size:28px;
+  }
+
+}
+@media (max-width: 850px) {
+
+  .copy h1 {
+    color: #f7e9e0 !important;
+  }
+
+  .subtitle {
+    color: #f7e9e0 !important;
+  }
+
+  .about-copy {
+    color: #f0d8d0 !important;
+  }
+
+  .about-copy strong {
+    color: #f7e9e0 !important;
+  }
+
+  .eyebrow {
+    color: #e8c8bf !important;
+  }
+
+}
+</style>
+</head>
+
+<body>
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+
+<header class="topbar">
+  <a class="brand" href="#top">♥ <span>THE DECK</span></a>
+  <div class="top-actions">
+    <button id="themeToggle" class="toggle">Light <span>☾</span> Dark</button>
+    <button id="shuffleBtn" class="icon-btn" aria-label="Shuffle cards">♣</button>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- FIRST SECTION -->
+<section class="hero" id="about">
+  <div class="copy reveal">
+    <h1>HELLO!<br>I'm Tahseen <span>♥</span></h1>
+    <p class="subtitle">CSE <b>✦</b> Cybersecurity</p>
+
+    <div class="about-copy">
+      <strong>About me</strong>
+      I'm a first year cse cybersecurity student, figuring things out as I go, with a firm belief that you can always "fake it till you make it." I'm still discovering what I'm capable of, with every new skill adding to the hand I’m building.
+    </div>
+  </div>
+
+  <div class="tabletop reveal">
+    <div class="deck-card deck-one"></div>
+    <div class="deck-card deck-two"></div>
+
+    <article class="playing-card profile-card">
+      <div class="corner">A<br><span>♥</span></div>
+      <div class="photo-placeholder">
+          <img src="tahseen.jpg" alt="Tahseen">
+      </div>
+      <div class="corner bottom">A<br><span>♥</span></div>
+    </article>
+
+    <div class="tabletape"></div>
+    <div class="floating-suit suit-heart">♥</div>
+    <div class="floating-suit suit-star">✦</div>
+    <div class="floating-suit suit-diamond">♦</div>
+  </div>
+</section>
+
+<!-- SECOND SECTION -->
+<section class="hand-section" id="interests">
+  <div class="section-heading reveal">
+    <h2>A look at my hand so far.</h2>
+    <p>Interests, hobbies and the skills I bring to the table.</p>
+  </div>
+
+  <div class="card-row">
+    <article class="playing-card info-card reveal">
+      <div class="corner">A<br><span>♥</span></div>
+      <div class="illustration">⌘<br>♡</div>
+      <h3><br>Interests<br></h3>
+      <ul>
+        <li>Tech</li><li>Design</li><li>Games</li><li>Anime</li><li>Films</li>
+      </ul>
+      <div class="corner bottom">A<br><span>♥</span></div>
+    </article>
+
+    <article class="playing-card info-card reveal">
+      <div class="corner">K<br><span>♣</span></div>
+      <div class="illustration">♧<br>✦</div>
+      <h3><br>Hobbies<br></h3>
+      <ul>
+        <li>Reading</li><li>Drawing</li><li>Tennis</li><li>Photography</li><li>Chess</li>
+      </ul>
+      <div class="corner bottom">K<br><span>♣</span></div>
+    </article>
+
+    <article class="playing-card info-card reveal">
+      <div class="corner">Q<br><span>♦</span></div>
+      <div class="illustration">&lt;/&gt;<br>✧</div>
+      <h3><br>Skills<br></h3>
+      <ul>
+        <li>Python</li><li>C</li><li>MySQL</li><li>HTML</li>
+      </ul>
+      <div class="corner bottom">Q<br><span>♦</span></div>
+    </article>
+  </div>
+</section>
+
+<!-- THIRD SECTION -->
+<section class="social-section" id="socials">
+  <div class="social-intro reveal">
+    <h2>Find me<br><em>elsewhere.</em> ♦</h2>
+    <p>Feel free to reach out!</p>
+  </div>
+
+  <div class="social-deck">
+    <a class="playing-card social-card reveal" href="https://github.com/miso480" target="_blank" rel="noopener">
+      <div class="corner">A<br><span>♣</span></div>
+      <div class="social-icon">⌘</div><h3>GitHub</h3><p>Projects & code</p><span class="arrow">→</span>
+      <div class="corner bottom">A<br><span>♣</span></div>
+    </a>
+
+    <a class="playing-card social-card reveal" href="https://www.linkedin.com/in/tahseen-nawaz-432b85364" target="_blank" rel="noopener">
+      <div class="corner">A<br><span>♥</span></div>
+      <div class="social-icon">in</div><h3>LinkedIn</h3><p>Let's connect</p><span class="arrow">→</span>
+      <div class="corner bottom">A<br><span>♥</span></div>
+    </a>
+
+    <a class="playing-card social-card reveal" href="https://www.instagram.com/_.senpaiii__/" target="_blank" rel="noopener">
+      <div class="corner">A<br><span>♦</span></div>
+      <div class="social-icon">◎</div><h3>Instagram</h3><p>A little bit of life</p><span class="arrow">→</span>
+      <div class="corner bottom">A<br><span>♦</span></div>
+    </a>
+  </div>
+</section>
+
+
+</main>
+
+<script>
+const body = document.body;
+
+// ====================
+// LIGHT / DARK MODE
+// ====================
+
+const savedTheme = localStorage.getItem("deck-theme");
+
+if (savedTheme === "light") {
+  body.classList.add("light");
+}
+
+const themeToggle = document.getElementById("themeToggle");
+
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    body.classList.toggle("light");
+
+    localStorage.setItem(
+      "deck-theme",
+      body.classList.contains("light") ? "light" : "dark"
+    );
+  });
+}
+
+
+// ====================
+// CARD SHUFFLE BUTTON
+// ====================
+
+const shuffleBtn = document.getElementById("shuffleBtn");
+
+if (shuffleBtn) {
+  shuffleBtn.addEventListener("click", () => {
+
+    const cards = document.querySelectorAll(".playing-card, .deck-card");
+
+    cards.forEach((card, i) => {
+
+      card.classList.remove("shuffling");
+
+      // Restart animation
+      void card.offsetWidth;
+
+      // Correct animation delay
+      card.style.animationDelay = `${i * 60}ms`;
+
+      card.classList.add("shuffling");
+
+    });
+
+  });
+}
+
+
+// ====================
+// SCROLL REVEAL
+// ====================
+
+const revealObserver = new IntersectionObserver((entries) => {
+
+  entries.forEach(entry => {
+
+    if (entry.isIntersecting) {
+      entry.target.classList.add("reveal");
+    }
+
+  });
+
+}, { threshold: 0.12 });
+
+
+document.querySelectorAll(".reveal").forEach(el => {
+  revealObserver.observe(el);
+});
+
+</script>
